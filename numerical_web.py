@@ -1,5 +1,5 @@
 
-# ═══════════════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════════════════
 #   Numerical Methods Calculator — Web Edition (Mobile Friendly)
 #   Horus University · Faculty of AI · Cyber Security Department
 #   Run:  streamlit run numerical_web.py
@@ -8,6 +8,7 @@
 import math
 import ast
 import base64
+import re
 import warnings
 import pandas as pd
 import numpy as np
@@ -271,10 +272,16 @@ def is_equally_spaced(x, tol=1e-12):
     return np.max(np.abs(diffs - diffs[0])) <= tol
 
 # ═══════════════════════════════════════════════════════════════════════════════
-#  SAFE EVAL
+#  SAFE EVAL (WITH USER-FRIENDLY AUTO-CORRECTION)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def _safe_eval(expr, x):
+    # اللمسة الذكية (User-Friendly Auto-Correction)
+    expr = expr.replace('^', '**')
+    expr = re.sub(r'(\d)([a-zA-Z\(])', r'\1*\2', expr) # 2x -> 2*x أو 2( -> 2*(
+    expr = re.sub(r'(\))([a-zA-Z\d\(])', r'\1*\2', expr) # )2 -> )*2 أو )( -> )*(
+    expr = re.sub(r'([a-zA-Z])(\()', r'\1*\2', expr) # x( -> x*(
+    
     allowed = {
         "x": x, "sin": math.sin, "cos": math.cos, "tan": math.tan,
         "exp": math.exp, "log": math.log, "sqrt": math.sqrt,
@@ -348,6 +355,21 @@ def newton_raphson(expr, d_expr, x0, tol=1e-6, max_iter=100):
     if tol <= 0: raise ValueError("Tolerance must be positive.")
     if tol > 0.5: raise ValueError("Tolerance suspiciously large (>0.5).")
     if max_iter < 1: raise ValueError("max_iter must be >= 1.")
+    
+    # التحقق الذكي من صحة المشتقة (Smart Derivative Validation)
+    h = 1e-5
+    try:
+        num_dfx0 = (_safe_eval(expr, x0 + h) - _safe_eval(expr, x0 - h)) / (2 * h)
+        user_dfx0 = _safe_eval(d_expr, x0)
+        error_margin = abs(num_dfx0) * 0.05 + 0.1
+        
+        if abs(user_dfx0 - num_dfx0) > error_margin:
+            raise ValueError(f"Math Error: f'(x) is NOT the correct derivative of f(x) at x0={x0}.\nExpected f'({x0}) ~ {num_dfx0:.4f}, but you entered {user_dfx0:.4f}.")
+    except ValueError:
+        raise
+    except Exception:
+        pass
+
     steps = []
     x = x0
     converged = False
@@ -920,7 +942,7 @@ with st.sidebar:
     st.markdown("---")
     st.markdown('<div style="font-size:10px;color:#606080;line-height:1.8;">Competition Mode<br>Cyber Security Department<br><br>Team:<br>' + "<br>".join([f"• {m}" for m in TEAM]) + '</div>', unsafe_allow_html=True)
 
-# ═══════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════
 #  SPLASH SCREEN
 # ═══════════════════════════════════════════════════════════════════
 
