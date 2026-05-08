@@ -35,196 +35,227 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
     :root {
-        --bg-main: #0A0A0F;
-        --bg-panel: #12121A;
-        --bg-soft: #1A1A24;
-        --border: #252535;
+        --bg-main: #07070C;
+        --bg-panel: rgba(20, 20, 32, 0.55);
+        --bg-soft: rgba(30, 30, 48, 0.55);
+        --border: rgba(120, 140, 200, 0.18);
+        --border-strong: rgba(0, 180, 216, 0.35);
         --text-main: #F0F0FF;
         --text-muted: #9090B0;
         --accent: #00B4D8;
+        --accent-2: #7B5BFF;
         --accent-hover: #0096C7;
         --success: #00FF88;
         --error: #FF4455;
     }
 
+    /* Animated mesh background */
     .stApp {
-        background-color: var(--bg-main);
+        background:
+            radial-gradient(1000px 600px at 10% -10%, rgba(0,180,216,0.18), transparent 60%),
+            radial-gradient(900px 700px at 110% 10%, rgba(123,91,255,0.16), transparent 60%),
+            radial-gradient(700px 500px at 50% 120%, rgba(0,255,136,0.10), transparent 60%),
+            #07070C;
+        background-attachment: fixed;
         color: var(--text-main);
+        font-family: 'Inter', system-ui, sans-serif;
     }
+    .stApp::before {
+        content: "";
+        position: fixed; inset: 0;
+        background-image:
+            linear-gradient(rgba(120,140,200,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(120,140,200,0.05) 1px, transparent 1px);
+        background-size: 32px 32px;
+        pointer-events: none;
+        z-index: 0;
+        animation: gridShift 40s linear infinite;
+    }
+    @keyframes gridShift {
+        from { background-position: 0 0, 0 0; }
+        to   { background-position: 32px 32px, 32px 32px; }
+    }
+
+    .block-container { position: relative; z-index: 1; padding-top: 2rem; padding-bottom: 2rem; }
 
     section[data-testid="stSidebar"] {
-        background-color: var(--bg-panel);
-        border-left: 1px solid var(--border);
+        background: linear-gradient(180deg, rgba(18,18,26,0.85), rgba(10,10,16,0.85));
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-right: 1px solid var(--border);
     }
 
+    /* Inputs */
     .stTextInput > div > div > input,
     .stNumberInput > div > div > input,
     .stTextArea > div > div > textarea {
-        background-color: var(--bg-soft) !important;
+        background-color: rgba(20,20,32,0.7) !important;
         color: var(--text-main) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 10px !important;
-        padding: 10px 14px !important;
+        border-radius: 12px !important;
+        padding: 11px 14px !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        transition: all 0.25s ease;
     }
-
     .stTextInput > div > div > input:focus,
-    .stNumberInput > div > div > input:focus {
+    .stNumberInput > div > div > input:focus,
+    .stTextArea > div > div > textarea:focus {
         border-color: var(--accent) !important;
-        box-shadow: 0 0 0 2px rgba(0,180,216,0.15) !important;
+        box-shadow: 0 0 0 3px rgba(0,180,216,0.18), 0 4px 18px rgba(0,180,216,0.15) !important;
+        transform: translateY(-1px);
     }
-
     .stSelectbox > div > div {
-        background-color: var(--bg-soft) !important;
+        background-color: rgba(20,20,32,0.7) !important;
         color: var(--text-main) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 10px !important;
+        border-radius: 12px !important;
     }
 
-    .stDataFrame {
-        background-color: var(--bg-panel) !important;
+    /* Glass cards */
+    .stDataFrame, div[data-testid="stMetric"], .info-card, .result-box,
+    .stTabs [data-baseweb="tab-list"] {
+        background: var(--bg-panel) !important;
+        backdrop-filter: blur(18px) saturate(140%);
+        -webkit-backdrop-filter: blur(18px) saturate(140%);
         border: 1px solid var(--border) !important;
-        border-radius: 10px !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .stDataFrame thead th {
-        background-color: var(--bg-soft) !important;
+        background: linear-gradient(180deg, rgba(0,180,216,0.12), rgba(0,180,216,0.04)) !important;
         color: var(--accent) !important;
         font-weight: 600 !important;
         text-align: center !important;
-        padding: 10px !important;
-        border-bottom: 2px solid var(--accent) !important;
+        padding: 11px !important;
+        border-bottom: 1px solid var(--border-strong) !important;
+        font-family: 'Inter', sans-serif !important;
+        letter-spacing: 0.3px;
     }
-
     .stDataFrame tbody td {
-        background-color: var(--bg-panel) !important;
+        background: transparent !important;
         color: var(--text-main) !important;
         text-align: center !important;
-        padding: 8px !important;
-        border-bottom: 1px solid var(--border) !important;
-        font-family: 'Courier New', monospace !important;
+        padding: 9px !important;
+        border-bottom: 1px solid rgba(120,140,200,0.08) !important;
+        font-family: 'JetBrains Mono', monospace !important;
         font-size: 13px !important;
     }
-
     .stDataFrame tbody tr:hover td {
-        background-color: var(--bg-soft) !important;
+        background: rgba(0,180,216,0.06) !important;
     }
 
-    div[data-testid="stMetric"] {
-        background-color: var(--bg-panel) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 12px !important;
-        padding: 14px !important;
-    }
-
-    div[data-testid="stMetricLabel"] {
-        color: var(--text-muted) !important;
-        font-size: 12px !important;
-    }
-
+    div[data-testid="stMetric"] { padding: 16px !important; transition: transform .25s ease, box-shadow .25s ease; }
+    div[data-testid="stMetric"]:hover { transform: translateY(-2px); box-shadow: 0 12px 38px rgba(0,180,216,0.18); }
+    div[data-testid="stMetricLabel"] { color: var(--text-muted) !important; font-size: 12px !important; letter-spacing: 0.4px; text-transform: uppercase; }
     div[data-testid="stMetricValue"] {
-        color: var(--accent) !important;
-        font-size: 22px !important;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
     }
 
-    h1, h2, h3, h4 {
-        color: var(--text-main) !important;
+    h1, h2, h3, h4 { color: var(--text-main) !important; font-family: 'Inter', sans-serif !important; letter-spacing: -0.02em; }
+    p, label { color: var(--text-muted) !important; }
+
+    /* Buttons */
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        font-weight: 700;
+        padding: 13px 28px;
+        font-size: 15px;
+        letter-spacing: 0.3px;
+        width: 100%;
+        box-shadow: 0 8px 24px rgba(0,180,216,0.32), inset 0 1px 0 rgba(255,255,255,0.18);
+        transition: all 0.25s cubic-bezier(.2,.8,.2,1);
+        position: relative;
+        overflow: hidden;
+    }
+    .stButton > button[kind="primary"]:hover {
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 14px 36px rgba(0,180,216,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
+        filter: brightness(1.08);
+    }
+    .stButton > button[kind="primary"]:active { transform: translateY(0) scale(0.99); }
+    .stButton > button[kind="secondary"] {
+        background: rgba(30,30,48,0.6);
+        backdrop-filter: blur(10px);
+        color: var(--text-main);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        font-weight: 600;
+        padding: 11px 20px;
+        transition: all 0.25s ease;
+    }
+    .stButton > button[kind="secondary"]:hover {
+        border-color: var(--border-strong);
+        background: rgba(0,180,216,0.08);
     }
 
-    p, span, label, div {
-        color: var(--text-muted) !important;
-    }
-
-    .stMarkdown p, .stMarkdown span, .stMarkdown div {
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] { gap: 4px; padding: 5px; }
+    .stTabs [data-baseweb="tab"] {
+        background: transparent;
         color: var(--text-muted);
+        border-radius: 10px;
+        padding: 9px 16px;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    .stTabs [data-baseweb="tab"]:hover { color: var(--text-main); background: rgba(255,255,255,0.03); }
+    .stTabs [data-baseweb="tab-highlight"] { background: transparent; }
+    .stTabs [aria-selected="true"] {
+        color: #fff !important;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+        border-radius: 10px;
+        box-shadow: 0 4px 14px rgba(0,180,216,0.35);
+    }
+
+    /* Result fade-in */
+    .stDataFrame, div[data-testid="stMetric"], .result-box, .stSuccess, .stError, .stWarning, .stInfo {
+        animation: fadeUp 0.45s cubic-bezier(.2,.8,.2,1) both;
+    }
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
 
     .stSuccess, .stError, .stWarning, .stInfo {
-        border-radius: 10px !important;
-        padding: 12px 16px !important;
+        border-radius: 12px !important;
+        padding: 13px 18px !important;
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border) !important;
     }
+    .stSuccess { border-left: 3px solid var(--success) !important; }
+    .stError   { border-left: 3px solid var(--error) !important; }
 
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
-
-    .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-        color: #000;
-        border: none;
-        border-radius: 12px;
-        font-weight: 700;
-        padding: 12px 28px;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        width: 100%;
-    }
-
-    .stButton > button[kind="secondary"] {
-        background-color: var(--bg-soft);
-        color: var(--text-main);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        font-weight: 600;
-        padding: 10px 20px;
-    }
-
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 4px;
-        background-color: var(--bg-panel);
-        border-radius: 12px;
-        padding: 4px;
-        border: 1px solid var(--border);
-    }
-
-    .stTabs [data-baseweb="tab"] {
-        background-color: transparent;
-        color: var(--text-muted);
-        border-radius: 8px;
-        padding: 8px 16px;
-        font-size: 13px;
-        font-weight: 500;
-    }
-
-    .stTabs [data-baseweb="tab-highlight"] {
-        background-color: var(--accent);
-        border-radius: 8px;
-        height: 3px;
-    }
-
-    .stTabs [aria-selected="true"] {
-        color: #000 !important;
-        background-color: var(--accent) !important;
-        border-radius: 8px;
-    }
-
-    .info-card {
-        background-color: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 12px;
-    }
-
+    .info-card { padding: 16px; margin-bottom: 12px; }
     .result-box {
-        background-color: var(--bg-panel);
-        border: 1px solid var(--border);
-        border-radius: 12px;
         padding: 16px;
-        font-family: 'Courier New', monospace;
+        font-family: 'JetBrains Mono', monospace;
         font-size: 13px;
-        line-height: 1.8;
+        line-height: 1.85;
         color: var(--text-main);
         white-space: pre-wrap;
         overflow-x: auto;
     }
-
     .header-accent {
-        color: var(--accent) !important;
-        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
     }
-
     .section-title {
         color: var(--text-main) !important;
         font-size: 18px;
@@ -234,21 +265,20 @@ st.markdown("""
         border-bottom: 1px solid var(--border);
     }
 
+    /* Spinner accent */
+    .stSpinner > div > div { border-top-color: var(--accent) !important; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,180,216,0.25); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,180,216,0.45); }
+
     @media (max-width: 768px) {
-        .block-container {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-
-        .stButton > button {
-            padding: 10px 16px;
-            font-size: 14px;
-        }
-
-        .stDataFrame tbody td {
-            font-size: 11px !important;
-            padding: 6px !important;
-        }
+        .block-container { padding-left: 1rem; padding-right: 1rem; }
+        .stButton > button { padding: 11px 16px; font-size: 14px; }
+        .stDataFrame tbody td { font-size: 11px !important; padding: 6px !important; }
+        div[data-testid="stMetricValue"] { font-size: 20px !important; }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -275,19 +305,36 @@ def is_equally_spaced(x, tol=1e-12):
 #  SAFE EVAL (WITH USER-FRIENDLY AUTO-CORRECTION)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def _safe_eval(expr, x):
-    # اللمسة الذكية (User-Friendly Auto-Correction)
+# Cache compiled expressions so we don't re-parse the string on every iteration.
+# This gives a large speedup for methods that evaluate f(x) hundreds of times
+# (Bisection / Newton / Secant with high max_iter).
+_EXPR_CACHE: dict[str, "compile"] = {}
+_MATH_GLOBALS = {
+    "__builtins__": {},
+    "sin": math.sin, "cos": math.cos, "tan": math.tan,
+    "asin": math.asin, "acos": math.acos, "atan": math.atan,
+    "sinh": math.sinh, "cosh": math.cosh, "tanh": math.tanh,
+    "exp": math.exp, "log": math.log, "log10": math.log10,
+    "sqrt": math.sqrt, "pi": math.pi, "e": math.e, "abs": abs,
+}
+
+def _normalize_expr(expr: str) -> str:
     expr = expr.replace('^', '**')
-    expr = re.sub(r'(\d)([a-zA-Z\(])', r'\1*\2', expr) # 2x -> 2*x أو 2( -> 2*(
-    expr = re.sub(r'(\))([a-zA-Z\d\(])', r'\1*\2', expr) # )2 -> )*2 أو )( -> )*(
-    expr = re.sub(r'([a-zA-Z])(\()', r'\1*\2', expr) # x( -> x*(
-    
-    allowed = {
-        "x": x, "sin": math.sin, "cos": math.cos, "tan": math.tan,
-        "exp": math.exp, "log": math.log, "sqrt": math.sqrt,
-        "pi": math.pi, "e": math.e, "abs": abs,
-    }
-    return eval(expr, {"__builtins__": {}}, allowed)
+    expr = re.sub(r'(\d)([a-zA-Z\(])', r'\1*\2', expr)
+    expr = re.sub(r'(\))([a-zA-Z\d\(])', r'\1*\2', expr)
+    expr = re.sub(r'([a-zA-Z])(\()', r'\1*\2', expr)
+    return expr
+
+def _compile_expr(expr: str):
+    code = _EXPR_CACHE.get(expr)
+    if code is None:
+        code = compile(_normalize_expr(expr), "<expr>", "eval")
+        _EXPR_CACHE[expr] = code
+    return code
+
+def _safe_eval(expr, x):
+    code = _compile_expr(expr)
+    return eval(code, _MATH_GLOBALS, {"x": x})
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  ROOT-FINDING METHODS
