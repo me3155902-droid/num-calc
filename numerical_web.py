@@ -29,7 +29,7 @@ st.set_page_config(
 )
 
 # ═══════════════════════════════════════════════════════════════════════════════
-#  PREMIUM DARK THEME CSS (التصميم المفخم)
+#  PREMIUM DARK THEME CSS
 # ═══════════════════════════════════════════════════════════════════════════════
 
 st.markdown("""
@@ -61,7 +61,7 @@ st.markdown("""
         color: var(--text-main);
         font-family: var(--font-main);
     }
-    
+
     .stApp::before {
         content: "";
         position: fixed; inset: 0;
@@ -148,21 +148,21 @@ st.markdown("""
         background: rgba(0,180,216,0.08) !important;
     }
 
-    div[data-testid="stMetric"] { 
-        padding: 20px !important; 
-        transition: transform .3s ease, box-shadow .3s ease; 
+    div[data-testid="stMetric"] {
+        padding: 20px !important;
+        transition: transform .3s ease, box-shadow .3s ease;
         border: 1px solid var(--border) !important;
     }
-    div[data-testid="stMetric"]:hover { 
-        transform: translateY(-4px); 
-        box-shadow: 0 15px 45px rgba(0,180,216,0.25); 
+    div[data-testid="stMetric"]:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 45px rgba(0,180,216,0.25);
         border-color: var(--accent) !important;
     }
-    div[data-testid="stMetricLabel"] { 
-        color: var(--text-muted) !important; 
-        font-size: 13px !important; 
-        letter-spacing: 0.6px; 
-        text-transform: uppercase; 
+    div[data-testid="stMetricLabel"] {
+        color: var(--text-muted) !important;
+        font-size: 13px !important;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
         font-weight: 600;
     }
     div[data-testid="stMetricValue"] {
@@ -200,7 +200,7 @@ st.markdown("""
         filter: brightness(1.1);
     }
     .stButton > button[kind="primary"]:active { transform: translateY(0) scale(0.98); }
-    
+
     .stButton > button[kind="secondary"] {
         background: rgba(30,30,48,0.7);
         backdrop-filter: blur(12px);
@@ -253,9 +253,9 @@ st.markdown("""
     .stSuccess { border-left: 4px solid var(--success) !important; }
     .stError   { border-left: 4px solid var(--error) !important; }
 
-    .info-card { 
-        padding: 18px; 
-        margin-bottom: 14px; 
+    .info-card {
+        padding: 18px;
+        margin-bottom: 14px;
         background: var(--bg-soft) !important;
         border: 1px solid var(--border) !important;
         border-radius: 14px !important;
@@ -271,7 +271,7 @@ st.markdown("""
         background: var(--bg-soft) !important;
         border: 1px solid var(--border) !important;
     }
-    
+
     .section-title {
         color: var(--text-main) !important;
         font-size: 22px;
@@ -281,6 +281,38 @@ st.markdown("""
         border-bottom: 2px solid var(--border-strong);
         text-transform: uppercase;
         letter-spacing: 0.5px;
+    }
+
+    .error-banner {
+        background: rgba(255,68,85,0.08);
+        border: 1.5px solid #FF4455;
+        border-left: 5px solid #FF4455;
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 20px;
+        font-family: var(--font-mono, monospace);
+        animation: fadeUp 0.4s ease both;
+    }
+    .error-banner-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: #FF4455;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+    .error-banner-msg {
+        font-size: 13px;
+        color: #FF8899;
+        line-height: 1.6;
+        word-break: break-word;
+    }
+    .error-banner-hint {
+        font-size: 11px;
+        color: #705060;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255,68,85,0.2);
     }
 
     ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -321,7 +353,7 @@ def is_equally_spaced(x, tol=1e-12):
     diffs = np.diff(arr)
     return np.max(np.abs(diffs - diffs[0])) <= tol
 
-_EXPR_CACHE: dict[str, "compile"] = {}
+_EXPR_CACHE: dict = {}
 _MATH_GLOBALS = {
     "__builtins__": {},
     "sin": math.sin, "cos": math.cos, "tan": math.tan,
@@ -454,7 +486,8 @@ def doolittle_lu(a, b):
 
 def thomas(lower, diag, upper, rhs):
     n = len(diag)
-    a, b, c, d = np.array(lower, dtype=float).copy(), np.array(diag, dtype=float).copy(), np.array(upper, dtype=float).copy(), np.array(rhs, dtype=float).copy()
+    a, b, c, d = (np.array(lower, dtype=float).copy(), np.array(diag, dtype=float).copy(),
+                  np.array(upper, dtype=float).copy(), np.array(rhs, dtype=float).copy())
     steps = []
     for i in range(1, n):
         if abs(b[i - 1]) < 1e-14: raise ValueError("Zero pivot in Thomas algorithm.")
@@ -582,33 +615,33 @@ def lagrange(x, y, x_val):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 METHOD_INFO = {
-    "Bisection":       {"category": "Root Finding",              "order": "Linear  (p = 1)",          "color": "#00B4D8", "desc": "Guaranteed convergence by halving the bracket.\nRequires sign change on [a, b]."},
-    "False Position":  {"category": "Root Finding",              "order": "Superlinear",              "color": "#0096C7", "desc": "Uses a secant line to approximate the root within a bracket.\nFaster than Bisection in practice."},
-    "Newton-Raphson":  {"category": "Root Finding",              "order": "Quadratic  (p = 2)",       "color": "#48CAE4", "desc": "Uses f(x) and f'(x) to converge very fast.\nMay diverge if f'(x) ~ 0."},
-    "Secant":          {"category": "Root Finding",              "order": "Superlinear  (p ~ 1.618)", "color": "#90E0EF", "desc": "Newton-Raphson without derivative.\nTwo initial guesses required."},
-    "Jacobi":          {"category": "Linear Systems - Iterative","order": "Linear  (spectral radius)", "color": "#00B4D8", "desc": "Updates all variables simultaneously using previous-step values.\nNeeds diagonal dominance to converge."},
-    "Gauss-Seidel":    {"category": "Linear Systems - Iterative","order": "Faster than Jacobi",        "color": "#0096C7", "desc": "Updates variables in-place, reusing newly computed values.\nTypically 2x faster than Jacobi."},
-    "Doolittle LU":    {"category": "Linear Systems - Direct",   "order": "O(n³) - exact",             "color": "#48CAE4", "desc": "Factorizes A = L·U, then solves two triangular systems.\nExact result in one pass."},
-    "Thomas":          {"category": "Linear Systems - Direct",   "order": "O(n) - tridiagonal special","color": "#90E0EF", "desc": "Optimized LU for tridiagonal A.\nOnly O(n) operations instead of O(n³)."},
-    "Newton Forward":  {"category": "Interpolation",             "order": "Polynomial - degree n-1",   "color": "#00B4D8", "desc": "Uses forward difference table.\nBest near the beginning of the data range."},
-    "Newton Backward": {"category": "Interpolation",             "order": "Polynomial - degree n-1",   "color": "#0096C7", "desc": "Uses backward difference table.\nBest near the end of the data range."},
-    "Stirling":        {"category": "Interpolation",             "order": "Polynomial - degree n-1",   "color": "#48CAE4", "desc": "Central-difference formula.\nBest accuracy near the middle of data range."},
-    "Lagrange":        {"category": "Interpolation",             "order": "Polynomial - exact fit",    "color": "#90E0EF", "desc": "Builds basis polynomials for each data point.\nNo equal spacing needed."},
+    "Bisection":       {"category": "Root Finding",               "order": "Linear  (p = 1)",           "color": "#00B4D8", "desc": "Guaranteed convergence by halving the bracket.\nRequires sign change on [a, b]."},
+    "False Position":  {"category": "Root Finding",               "order": "Superlinear",               "color": "#0096C7", "desc": "Uses a secant line to approximate the root within a bracket.\nFaster than Bisection in practice."},
+    "Newton-Raphson":  {"category": "Root Finding",               "order": "Quadratic  (p = 2)",        "color": "#48CAE4", "desc": "Uses f(x) and f'(x) to converge very fast.\nMay diverge if f'(x) ~ 0."},
+    "Secant":          {"category": "Root Finding",               "order": "Superlinear  (p ~ 1.618)",  "color": "#90E0EF", "desc": "Newton-Raphson without derivative.\nTwo initial guesses required."},
+    "Jacobi":          {"category": "Linear Systems - Iterative", "order": "Linear  (spectral radius)", "color": "#00B4D8", "desc": "Updates all variables simultaneously using previous-step values.\nNeeds diagonal dominance to converge."},
+    "Gauss-Seidel":    {"category": "Linear Systems - Iterative", "order": "Faster than Jacobi",        "color": "#0096C7", "desc": "Updates variables in-place, reusing newly computed values.\nTypically 2x faster than Jacobi."},
+    "Doolittle LU":    {"category": "Linear Systems - Direct",    "order": "O(n³) - exact",             "color": "#48CAE4", "desc": "Factorizes A = L·U, then solves two triangular systems.\nExact result in one pass."},
+    "Thomas":          {"category": "Linear Systems - Direct",    "order": "O(n) - tridiagonal special","color": "#90E0EF", "desc": "Optimized LU for tridiagonal A.\nOnly O(n) operations instead of O(n³)."},
+    "Newton Forward":  {"category": "Interpolation",              "order": "Polynomial - degree n-1",   "color": "#00B4D8", "desc": "Uses forward difference table.\nBest near the beginning of the data range."},
+    "Newton Backward": {"category": "Interpolation",              "order": "Polynomial - degree n-1",   "color": "#0096C7", "desc": "Uses backward difference table.\nBest near the end of the data range."},
+    "Stirling":        {"category": "Interpolation",              "order": "Polynomial - degree n-1",   "color": "#48CAE4", "desc": "Central-difference formula.\nBest accuracy near the middle of data range."},
+    "Lagrange":        {"category": "Interpolation",              "order": "Polynomial - exact fit",    "color": "#90E0EF", "desc": "Builds basis polynomials for each data point.\nNo equal spacing needed."},
 }
 
 LATEX_FORMULAS = {
-    "Bisection": r"c = \frac{a + b}{2}",
-    "False Position": r"x = \frac{a \cdot f(b) - b \cdot f(a)}{f(b) - f(a)}",
-    "Newton-Raphson": r"x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}",
-    "Secant": r"x_{n+1} = x_n - f(x_n) \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}",
-    "Jacobi": r"x_i^{k+1} = \frac{b_i - \sum_{j \neq i} a_{ij} x_j^k}{a_{ii}}",
-    "Gauss-Seidel": r"x_i^{k+1} = \frac{b_i - \sum_{j<i} a_{ij} x_j^{k+1} - \sum_{j>i} a_{ij} x_j^k}{a_{ii}}",
-    "Doolittle LU": r"A = L \cdot U \rightarrow Ly = b \rightarrow Ux = y",
-    "Thomas": r"\text{Forward sweep} \rightarrow \text{Back substitution} \quad O(n)",
-    "Newton Forward": r"f(x) = \sum_{k=0}^{n} \binom{p}{k} \Delta^k y_0",
+    "Bisection":       r"c = \frac{a + b}{2}",
+    "False Position":  r"x = \frac{a \cdot f(b) - b \cdot f(a)}{f(b) - f(a)}",
+    "Newton-Raphson":  r"x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}",
+    "Secant":          r"x_{n+1} = x_n - f(x_n) \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}",
+    "Jacobi":          r"x_i^{k+1} = \frac{b_i - \sum_{j \neq i} a_{ij} x_j^k}{a_{ii}}",
+    "Gauss-Seidel":    r"x_i^{k+1} = \frac{b_i - \sum_{j<i} a_{ij} x_j^{k+1} - \sum_{j>i} a_{ij} x_j^k}{a_{ii}}",
+    "Doolittle LU":    r"A = L \cdot U \rightarrow Ly = b \rightarrow Ux = y",
+    "Thomas":          r"\text{Forward sweep} \rightarrow \text{Back substitution} \quad O(n)",
+    "Newton Forward":  r"f(x) = \sum_{k=0}^{n} \binom{p}{k} \Delta^k y_0",
     "Newton Backward": r"f(x) = \sum_{k=0}^{n} (-1)^k \binom{-p}{k} \nabla^k y_n",
-    "Stirling": r"f(x) = y_0 + p \mu \delta y_0 + \frac{p^2}{2!} \delta^2 y_0 + \dots",
-    "Lagrange": r"f(x) = \sum_{i=0}^{n} y_i \prod_{j \neq i} \frac{x - x_j}{x_i - x_j}",
+    "Stirling":        r"f(x) = y_0 + p \mu \delta y_0 + \frac{p^2}{2!} \delta^2 y_0 + \dots",
+    "Lagrange":        r"f(x) = \sum_{i=0}^{n} y_i \prod_{j \neq i} \frac{x - x_j}{x_i - x_j}",
 }
 
 DEMOS = {
@@ -636,34 +669,38 @@ def plotly_root(expr, root, a=None, b=None):
     if a is None or b is None: a, b = root - 2, root + 2
     xs = np.linspace(a, b, 500)
     ys = [_safe_eval(expr, x) for x in xs]
-    
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=xs, y=ys, mode='lines', name='f(x)', line=dict(color='#F0F0FF', width=3)))
     fig.add_hline(y=0, line_dash="dash", line_color="#9090B0", opacity=0.5)
     fig.add_vline(x=root, line_dash="dot", line_color="#00B4D8", opacity=0.8)
-    fig.add_trace(go.Scatter(x=[root], y=[_safe_eval(expr, root)], mode='markers', name=f'Root = {root:.6f}', 
+    fig.add_trace(go.Scatter(x=[root], y=[_safe_eval(expr, root)], mode='markers',
+                             name=f'Root = {root:.6f}',
                              marker=dict(color='#00B4D8', size=14, line=dict(width=3, color='#12121A'))))
-    
-    fig.update_layout(plot_bgcolor='#12121A', paper_bgcolor='#0A0A0F', font=dict(color='#F0F0FF', family='JetBrains Mono'),
-                      margin=dict(l=20, r=20, t=40, b=20), hoverlabel=dict(bgcolor='#1A1A24', font_color='#F0F0FF'))
+    fig.update_layout(plot_bgcolor='#12121A', paper_bgcolor='#0A0A0F',
+                      font=dict(color='#F0F0FF', family='JetBrains Mono'),
+                      margin=dict(l=20, r=20, t=40, b=20),
+                      hoverlabel=dict(bgcolor='#1A1A24', font_color='#F0F0FF'))
     fig.update_xaxes(gridcolor='#252535', zeroline=False, title='x')
     fig.update_yaxes(gridcolor='#252535', zeroline=False, title='f(x)')
-    fig.update_traces(hoverinfo='x+y', selector=dict(type='scatter'))
     return fig
 
 def plotly_interp(x, y, x_val, y_val):
     xs = np.linspace(min(x), max(x), 300)
     coeffs = np.polyfit(x, y, deg=min(len(x) - 1, 5))
     ys = np.polyval(coeffs, xs)
-    
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=xs, y=ys, mode='lines', name='Approx Curve', line=dict(color='#9090B0', width=2, dash='dash')))
-    fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data Points', marker=dict(color='#F0F0FF', size=10, line=dict(width=2, color='#12121A'))))
-    fig.add_trace(go.Scatter(x=[x_val], y=[y_val], mode='markers', name=f'f({x_val}) = {y_val:.4f}', 
-                             marker=dict(color='#00B4D8', size=16, line=dict(width=3, color='#12121A'), symbol='star')))
-    
-    fig.update_layout(plot_bgcolor='#12121A', paper_bgcolor='#0A0A0F', font=dict(color='#F0F0FF', family='JetBrains Mono'),
-                      margin=dict(l=20, r=20, t=40, b=20), hoverlabel=dict(bgcolor='#1A1A24', font_color='#F0F0FF'))
+    fig.add_trace(go.Scatter(x=xs, y=ys, mode='lines', name='Approx Curve',
+                             line=dict(color='#9090B0', width=2, dash='dash')))
+    fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data Points',
+                             marker=dict(color='#F0F0FF', size=10, line=dict(width=2, color='#12121A'))))
+    fig.add_trace(go.Scatter(x=[x_val], y=[y_val], mode='markers',
+                             name=f'f({x_val}) = {y_val:.4f}',
+                             marker=dict(color='#00B4D8', size=16,
+                                         line=dict(width=3, color='#12121A'), symbol='star')))
+    fig.update_layout(plot_bgcolor='#12121A', paper_bgcolor='#0A0A0F',
+                      font=dict(color='#F0F0FF', family='JetBrains Mono'),
+                      margin=dict(l=20, r=20, t=40, b=20),
+                      hoverlabel=dict(bgcolor='#1A1A24', font_color='#F0F0FF'))
     fig.update_xaxes(gridcolor='#252535', zeroline=False, title='x')
     fig.update_yaxes(gridcolor='#252535', zeroline=False, title='y')
     return fig
@@ -674,24 +711,21 @@ def plotly_convergence(steps, method):
         fig = go.Figure()
         fig.update_layout(plot_bgcolor='#12121A', paper_bgcolor='#0A0A0F', title="Not enough iterations")
         return fig
-
     iters = list(range(1, len(errors) + 1))
     log_errors = [np.log10(e) for e in errors]
-
     fig = make_subplots(rows=2, cols=1, subplot_titles=("Log10(Error) Convergence", "Error per Iteration"))
-    
     fig.add_trace(go.Scatter(x=iters, y=log_errors, mode='lines+markers', name='Log Error',
                              line=dict(color='#00B4D8', width=3), marker=dict(size=8)), row=1, col=1)
-    
-    fig.add_trace(go.Bar(x=iters, y=errors, name='Absolute Error', marker_color='#7B5BFF', marker_line_width=0), row=2, col=1)
-
-    fig.update_layout(plot_bgcolor='#12121A', paper_bgcolor='#0A0A0F', font=dict(color='#F0F0FF', family='JetBrains Mono'),
-                      margin=dict(l=20, r=20, t=60, b=20), hoverlabel=dict(bgcolor='#1A1A24', font_color='#F0F0FF'), showlegend=False)
+    fig.add_trace(go.Bar(x=iters, y=errors, name='Absolute Error',
+                         marker_color='#7B5BFF', marker_line_width=0), row=2, col=1)
+    fig.update_layout(plot_bgcolor='#12121A', paper_bgcolor='#0A0A0F',
+                      font=dict(color='#F0F0FF', family='JetBrains Mono'),
+                      margin=dict(l=20, r=20, t=60, b=20),
+                      hoverlabel=dict(bgcolor='#1A1A24', font_color='#F0F0FF'), showlegend=False)
     fig.update_xaxes(gridcolor='#252535', zeroline=False, row=1, col=1)
     fig.update_xaxes(gridcolor='#252535', zeroline=False, row=2, col=1)
     fig.update_yaxes(gridcolor='#252535', zeroline=False, title='log₁₀(|err|)', row=1, col=1)
     fig.update_yaxes(gridcolor='#252535', zeroline=False, title='|Error|', type="log", row=2, col=1)
-    
     return fig
 
 def make_diff_text(diffs, x_vals):
@@ -709,7 +743,7 @@ def make_diff_text(diffs, x_vals):
     return "\n".join(lines)
 
 # ═══════════════════════════════════════════════════════════════════════════════
-#  CHECK CONVERGENCE (معدلة بالتحقق الذكي من المشتقة)
+#  CONVERGENCE CHECK
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def run_check(method, params):
@@ -738,13 +772,16 @@ def run_check(method, params):
             lines.append("→ SINGULAR. LU will fail." if abs(np.linalg.det(a)) < 1e-14 else "→ Non-singular. LU should work.")
 
         elif method == "Thomas":
-            lower, diag, upper, rhs = ast.literal_eval(params["lower"]), ast.literal_eval(params["diag"]), ast.literal_eval(params["upper"]), ast.literal_eval(params["rhs"])
+            lower = ast.literal_eval(params["lower"])
+            diag  = ast.literal_eval(params["diag"])
+            upper = ast.literal_eval(params["upper"])
+            rhs   = ast.literal_eval(params["rhs"])
             n = len(diag)
             lines.append(f"\nMatrix size: {n}x{n}")
             dim_ok = True
             if len(lower) != n-1: lines.append(f"ERROR: Lower should have {n-1} elems"); dim_ok = False
             if len(upper) != n-1: lines.append(f"ERROR: Upper should have {n-1} elems"); dim_ok = False
-            if len(rhs) != n: lines.append(f"ERROR: RHS should have {n} elems"); dim_ok = False
+            if len(rhs)   != n:   lines.append(f"ERROR: RHS should have {n} elems");     dim_ok = False
             if dim_ok: lines.append("→ Dimensions OK.")
 
         elif method in {"Bisection", "False Position"}:
@@ -756,18 +793,16 @@ def run_check(method, params):
 
         elif method == "Newton-Raphson":
             x0 = float(params["x0"])
-            expr = params["expr"]
+            expr   = params["expr"]
             d_expr = params["d_expr"]
-            fx0 = _safe_eval(expr, x0)
+            fx0  = _safe_eval(expr, x0)
             dfx0 = _safe_eval(d_expr, x0)
             lines.append(f"\nf({x0}) = {fx0:.6f}\nf'({x0}) = {dfx0:.6f}")
-            
-            is_correct_deriv = None
             h = 1e-5
+            is_correct_deriv = None
             try:
                 num_dfx0 = (_safe_eval(expr, x0 + h) - _safe_eval(expr, x0 - h)) / (2 * h)
                 error_margin = abs(num_dfx0) * 0.05 + 0.1
-                
                 if abs(dfx0 - num_dfx0) > error_margin:
                     is_correct_deriv = False
                     lines.append(f"→ ❌ WRONG DERIVATIVE: The entered f'(x) does NOT match f(x).")
@@ -777,7 +812,6 @@ def run_check(method, params):
                     lines.append(f"→ ✅ CORRECT DERIVATIVE: f'({x0}) matches numerical approximation (~{num_dfx0:.6f}).")
             except Exception:
                 pass
-                
             if abs(dfx0) < 1e-10:
                 lines.append("→ ⚠️ WARNING: Derivative near zero! Will diverge.")
             elif is_correct_deriv is True:
@@ -786,13 +820,15 @@ def run_check(method, params):
                 lines.append("→ ❌ Cannot guarantee convergence with wrong derivative.")
 
         elif method in {"Newton Forward", "Newton Backward", "Stirling"}:
-            x, y = np.array(ast.literal_eval(params["x"]), dtype=float), np.array(ast.literal_eval(params["y"]), dtype=float)
+            x = np.array(ast.literal_eval(params["x"]), dtype=float)
+            y = np.array(ast.literal_eval(params["y"]), dtype=float)
             eq = is_equally_spaced(x)
             lines.append(f"\nx: {x}\ny: {y}\nEqually spaced: {eq}")
             lines.append(f"→ Can apply. h = {x[1]-x[0]}" if eq else "→ NOT equally spaced! Use Lagrange.")
 
         elif method == "Lagrange":
-            x, y = ast.literal_eval(params["x"]), ast.literal_eval(params["y"])
+            x = ast.literal_eval(params["x"])
+            y = ast.literal_eval(params["y"])
             lines.append(f"\nx: {x}\ny: {y}\nPoints: {len(x)}")
             lines.append("→ OK. Any spacing works." if len(x)==len(y) else "→ ERROR: Different lengths!")
 
@@ -836,7 +872,8 @@ with st.sidebar:
         st.latex(LATEX_FORMULAS[method])
 
     st.markdown("---")
-    st.markdown('<div style="font-size:10px;color:#606080;line-height:1.8;">Competition Mode<br>Cyber Security Department<br><br>Team:<br>' + "<br>".join([f"• {m}" for m in TEAM]) + '</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:10px;color:#606080;line-height:1.8;">Competition Mode<br>Cyber Security Department<br><br>Team:<br>' +
+                "<br>".join([f"• {m}" for m in TEAM]) + '</div>', unsafe_allow_html=True)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  SPLASH SCREEN
@@ -919,124 +956,151 @@ st.markdown(f'<div style="font-size:14px;color:#9090B0;margin-bottom:28px;">Curr
 
 st.markdown('<div class="section-title">Parameters</div>', unsafe_allow_html=True)
 
-demo = DEMOS[method]
+demo   = DEMOS[method]
 params = {}
+
+# ── Reset widget values whenever the method changes ──
+_RESULT_KEYS = ("summary", "table_headers", "table_rows",
+                "plot_fig", "conv_fig", "metrics", "last_error")
+
+if st.session_state.get("_current_method") != method:
+    # Write demo values directly into session_state so Streamlit picks them up
+    for _k, _v in demo.items():
+        st.session_state[_k] = _v
+    # Clear results and errors from the old method
+    for _k in _RESULT_KEYS:
+        st.session_state.pop(_k, None)
+    st.session_state["_current_method"] = method
+
 
 if method in {"Bisection", "False Position"}:
     c1, c2, c3 = st.columns(3)
-    c1.markdown("**f(x)**"); params["expr"] = c1.text_input(" ", value=demo["expr"], key="expr", label_visibility="collapsed")
-    c2.markdown("**a**"); params["a"] = c2.text_input("  ", value=demo["a"], key="a", label_visibility="collapsed")
-    c3.markdown("**b**"); params["b"] = c3.text_input("   ", value=demo["b"], key="b", label_visibility="collapsed")
+    c1.markdown("**f(x)**");  params["expr"] = c1.text_input(" ",   value=demo["expr"], key="expr", label_visibility="collapsed")
+    c2.markdown("**a**");     params["a"]    = c2.text_input("  ",  value=demo["a"],    key="a",    label_visibility="collapsed")
+    c3.markdown("**b**");     params["b"]    = c3.text_input("   ", value=demo["b"],    key="b",    label_visibility="collapsed")
     with st.expander("⚙️ Advanced Settings", expanded=False):
         t1, t2 = st.columns(2)
-        params["tol"] = t1.text_input("Tolerance", value=demo["tol"], key="tol")
+        params["tol"]      = t1.text_input("Tolerance",      value=demo["tol"],      key="tol")
         params["max_iter"] = t2.text_input("Max Iterations", value=demo["max_iter"], key="max_iter")
 
 elif method == "Newton-Raphson":
     c1, c2, c3 = st.columns(3)
-    c1.markdown("**f(x)**"); params["expr"] = c1.text_input(" ", value=demo["expr"], key="expr", label_visibility="collapsed")
-    c2.markdown("**f'(x)**"); params["d_expr"] = c2.text_input("  ", value=demo["d_expr"], key="d_expr", label_visibility="collapsed")
-    c3.markdown("**x₀**"); params["x0"] = c3.text_input("   ", value=demo["x0"], key="x0", label_visibility="collapsed")
+    c1.markdown("**f(x)**");   params["expr"]   = c1.text_input(" ",   value=demo["expr"],   key="expr",   label_visibility="collapsed")
+    c2.markdown("**f'(x)**");  params["d_expr"] = c2.text_input("  ",  value=demo["d_expr"], key="d_expr", label_visibility="collapsed")
+    c3.markdown("**x₀**");     params["x0"]     = c3.text_input("   ", value=demo["x0"],     key="x0",     label_visibility="collapsed")
     with st.expander("⚙️ Advanced Settings", expanded=False):
         t1, t2 = st.columns(2)
-        params["tol"] = t1.text_input("Tolerance", value=demo["tol"], key="tol")
+        params["tol"]      = t1.text_input("Tolerance",      value=demo["tol"],      key="tol")
         params["max_iter"] = t2.text_input("Max Iterations", value=demo["max_iter"], key="max_iter")
 
 elif method == "Secant":
     c1, c2, c3 = st.columns(3)
-    c1.markdown("**f(x)**"); params["expr"] = c1.text_input(" ", value=demo["expr"], key="expr", label_visibility="collapsed")
-    c2.markdown("**x₀**"); params["x0"] = c2.text_input("  ", value=demo["x0"], key="x0", label_visibility="collapsed")
-    c3.markdown("**x₁**"); params["x1"] = c3.text_input("   ", value=demo["x1"], key="x1", label_visibility="collapsed")
+    c1.markdown("**f(x)**"); params["expr"] = c1.text_input(" ",   value=demo["expr"], key="expr", label_visibility="collapsed")
+    c2.markdown("**x₀**");   params["x0"]   = c2.text_input("  ",  value=demo["x0"],   key="x0",   label_visibility="collapsed")
+    c3.markdown("**x₁**");   params["x1"]   = c3.text_input("   ", value=demo["x1"],   key="x1",   label_visibility="collapsed")
     with st.expander("⚙️ Advanced Settings", expanded=False):
         t1, t2 = st.columns(2)
-        params["tol"] = t1.text_input("Tolerance", value=demo["tol"], key="tol")
+        params["tol"]      = t1.text_input("Tolerance",      value=demo["tol"],      key="tol")
         params["max_iter"] = t2.text_input("Max Iterations", value=demo["max_iter"], key="max_iter")
 
 elif method in {"Jacobi", "Gauss-Seidel", "Doolittle LU"}:
     c1, c2 = st.columns(2)
-    c1.markdown("**A (matrix)**"); params["A"] = c1.text_area(" ", value=demo["A"], key="A", label_visibility="collapsed", height=100)
+    c1.markdown("**A (matrix)**"); params["A"] = c1.text_area(" ",  value=demo["A"], key="A", label_visibility="collapsed", height=100)
     c2.markdown("**b (vector)**"); params["b"] = c2.text_area("  ", value=demo["b"], key="b", label_visibility="collapsed", height=100)
     with st.expander("⚙️ Advanced Settings", expanded=False):
         t1, t2, t3 = st.columns(3)
-        params["x0"] = t1.text_input("x₀", value=demo["x0"], key="x0")
-        params["tol"] = t2.text_input("Tolerance", value=demo["tol"], key="tol")
-        params["max_iter"] = t3.text_input("Max Iterations", value=demo["max_iter"], key="max_iter")
+        params["x0"]       = t1.text_input("x₀",             value=demo["x0"],       key="x0")
+        params["tol"]      = t2.text_input("Tolerance",       value=demo["tol"],      key="tol")
+        params["max_iter"] = t3.text_input("Max Iterations",  value=demo["max_iter"], key="max_iter")
 
 elif method == "Thomas":
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown("**Lower**"); params["lower"] = c1.text_input(" ", value=demo["lower"], key="lower", label_visibility="collapsed")
-    c2.markdown("**Main**"); params["diag"] = c2.text_input("  ", value=demo["diag"], key="diag", label_visibility="collapsed")
-    c3.markdown("**Upper**"); params["upper"] = c3.text_input("   ", value=demo["upper"], key="upper", label_visibility="collapsed")
-    c4.markdown("**RHS**"); params["rhs"] = c4.text_input("    ", value=demo["rhs"], key="rhs", label_visibility="collapsed")
+    c1.markdown("**Lower**"); params["lower"] = c1.text_input(" ",    value=demo["lower"], key="lower", label_visibility="collapsed")
+    c2.markdown("**Main**");  params["diag"]  = c2.text_input("  ",   value=demo["diag"],  key="diag",  label_visibility="collapsed")
+    c3.markdown("**Upper**"); params["upper"] = c3.text_input("   ",  value=demo["upper"], key="upper", label_visibility="collapsed")
+    c4.markdown("**RHS**");   params["rhs"]   = c4.text_input("    ", value=demo["rhs"],   key="rhs",   label_visibility="collapsed")
 
-else:
+else:  # Interpolation methods
     c1, c2, c3 = st.columns(3)
-    c1.markdown("**x values**"); params["x"] = c1.text_input(" ", value=demo["x"], key="x", label_visibility="collapsed")
-    c2.markdown("**y values**"); params["y"] = c2.text_input("  ", value=demo["y"], key="y", label_visibility="collapsed")
-    c3.markdown("**Target x**"); params["x_val"] = c3.text_input("   ", value=demo["x_val"], key="x_val", label_visibility="collapsed")
+    c1.markdown("**x values**"); params["x"]     = c1.text_input(" ",   value=demo["x"],     key="x",     label_visibility="collapsed")
+    c2.markdown("**y values**"); params["y"]      = c2.text_input("  ",  value=demo["y"],     key="y",     label_visibility="collapsed")
+    c3.markdown("**Target x**"); params["x_val"]  = c3.text_input("   ", value=demo["x_val"], key="x_val", label_visibility="collapsed")
 
 st.markdown("<br>", unsafe_allow_html=True)
 bc1, bc2, bc3 = st.columns(3)
-compute_clicked = bc1.button("⚡ Compute", type="primary", use_container_width=True)
-check_clicked = bc2.button("🔍 Check Convergence", use_container_width=True)
-demo_clicked = bc3.button("🔄 Load Demo", use_container_width=True)
+compute_clicked = bc1.button("⚡ Compute",           type="primary", use_container_width=True)
+check_clicked   = bc2.button("🔍 Check Convergence",                 use_container_width=True)
+demo_clicked    = bc3.button("🔄 Load Demo",                         use_container_width=True)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  COMPUTE
+# ═══════════════════════════════════════════════════════════════════════════════
 
 if compute_clicked:
+    # ── clear any previous error so a fresh success wipes the banner ──
+    st.session_state.pop("last_error", None)
+
     try:
         sep = "=" * 50
         summary_lines = [sep, f"  {method}", f"  Category: {info['category']}", f"  Order: {info['order']}", sep]
+        steps   = []
+        headers = []
 
         if method == "Bisection":
-            root, steps = bisection(params["expr"], float(params["a"]), float(params["b"]), float(params["tol"]), int(params["max_iter"]))
+            root, steps = bisection(params["expr"], float(params["a"]), float(params["b"]),
+                                    float(params["tol"]), int(params["max_iter"]))
             summary_lines += [f"  Root = {root:.10f}", f"  Iterations: {len(steps)}", f"  Final error: {steps[-1][-1]:.4e}"]
             headers = ["Iter", "a", "b", "c", "f(c)", "Error"]
             st.session_state["plot_fig"] = plotly_root(params["expr"], root, float(params["a"]), float(params["b"]))
             st.session_state["conv_fig"] = plotly_convergence(steps, method)
-            st.session_state["metrics"] = {"Root": f"{root:.8f}", "Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
+            st.session_state["metrics"]  = {"Root": f"{root:.8f}", "Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
 
         elif method == "False Position":
-            root, steps = false_position(params["expr"], float(params["a"]), float(params["b"]), float(params["tol"]), int(params["max_iter"]))
+            root, steps = false_position(params["expr"], float(params["a"]), float(params["b"]),
+                                         float(params["tol"]), int(params["max_iter"]))
             summary_lines += [f"  Root = {root:.10f}", f"  Iterations: {len(steps)}", f"  Final error: {steps[-1][-1]:.4e}"]
             headers = ["Iter", "a", "b", "x", "f(x)", "Error"]
             st.session_state["plot_fig"] = plotly_root(params["expr"], root, float(params["a"]), float(params["b"]))
             st.session_state["conv_fig"] = plotly_convergence(steps, method)
-            st.session_state["metrics"] = {"Root": f"{root:.8f}", "Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
+            st.session_state["metrics"]  = {"Root": f"{root:.8f}", "Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
 
         elif method == "Newton-Raphson":
-            root, steps = newton_raphson(params["expr"], params["d_expr"], float(params["x0"]), float(params["tol"]), int(params["max_iter"]))
+            root, steps = newton_raphson(params["expr"], params["d_expr"], float(params["x0"]),
+                                         float(params["tol"]), int(params["max_iter"]))
             summary_lines += [f"  Root = {root:.10f}", f"  Iterations: {len(steps)}", f"  Final error: {steps[-1][-1]:.4e}"]
             headers = ["Iter", "x_i", "f(x_i)", "f'(x_i)", "x_next", "Error"]
             st.session_state["plot_fig"] = plotly_root(params["expr"], root)
             st.session_state["conv_fig"] = plotly_convergence(steps, method)
-            st.session_state["metrics"] = {"Root": f"{root:.8f}", "Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
+            st.session_state["metrics"]  = {"Root": f"{root:.8f}", "Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
 
         elif method == "Secant":
-            root, steps = secant(params["expr"], float(params["x0"]), float(params["x1"]), float(params["tol"]), int(params["max_iter"]))
+            root, steps = secant(params["expr"], float(params["x0"]), float(params["x1"]),
+                                  float(params["tol"]), int(params["max_iter"]))
             summary_lines += [f"  Root = {root:.10f}", f"  Iterations: {len(steps)}", f"  Final error: {steps[-1][-1]:.4e}"]
             headers = ["Iter", "x0", "x1", "x2", "f(x2)", "Error"]
             st.session_state["plot_fig"] = plotly_root(params["expr"], root)
             st.session_state["conv_fig"] = plotly_convergence(steps, method)
-            st.session_state["metrics"] = {"Root": f"{root:.8f}", "Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
+            st.session_state["metrics"]  = {"Root": f"{root:.8f}", "Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
 
         elif method == "Jacobi":
-            a = np.array(ast.literal_eval(params["A"]), dtype=float)
-            b = np.array(ast.literal_eval(params["b"]), dtype=float)
+            a  = np.array(ast.literal_eval(params["A"]),  dtype=float)
+            b  = np.array(ast.literal_eval(params["b"]),  dtype=float)
             x0 = np.array(ast.literal_eval(params["x0"]), dtype=float)
             x, steps = jacobi(a, b, x0, float(params["tol"]), int(params["max_iter"]))
             summary_lines += [f"  Solution x = {x}", f"  Iterations: {len(steps)}", f"  Final error: {steps[-1][-1]:.4e}"]
             headers = ["Iter", "x_vector", "Error"]
             st.session_state["conv_fig"] = plotly_convergence(steps, method)
-            st.session_state["metrics"] = {"Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
+            st.session_state["metrics"]  = {"Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
 
         elif method == "Gauss-Seidel":
-            a = np.array(ast.literal_eval(params["A"]), dtype=float)
-            b = np.array(ast.literal_eval(params["b"]), dtype=float)
+            a  = np.array(ast.literal_eval(params["A"]),  dtype=float)
+            b  = np.array(ast.literal_eval(params["b"]),  dtype=float)
             x0 = np.array(ast.literal_eval(params["x0"]), dtype=float)
             x, steps = gauss_seidel(a, b, x0, float(params["tol"]), int(params["max_iter"]))
             summary_lines += [f"  Solution x = {x}", f"  Iterations: {len(steps)}", f"  Final error: {steps[-1][-1]:.4e}"]
             headers = ["Iter", "x_vector", "Error"]
             st.session_state["conv_fig"] = plotly_convergence(steps, method)
-            st.session_state["metrics"] = {"Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
+            st.session_state["metrics"]  = {"Iterations": len(steps), "Final Error": f"{steps[-1][-1]:.2e}"}
 
         elif method == "Doolittle LU":
             a = np.array(ast.literal_eval(params["A"]), dtype=float)
@@ -1048,83 +1112,108 @@ if compute_clicked:
 
         elif method == "Thomas":
             lower = ast.literal_eval(params["lower"])
-            diag = ast.literal_eval(params["diag"])
+            diag  = ast.literal_eval(params["diag"])
             upper = ast.literal_eval(params["upper"])
-            rhs = ast.literal_eval(params["rhs"])
+            rhs   = ast.literal_eval(params["rhs"])
             x, steps = thomas(lower, diag, upper, rhs)
             summary_lines += [f"  Solution x = {x}", f"  Forward sweep steps: {len(steps)}"]
             headers = ["Step", "w_factor", "new_b", "new_d"]
             st.session_state["metrics"] = {"Solution": np.array2string(x, precision=4)}
 
         elif method == "Newton Forward":
-            x = np.array(ast.literal_eval(params["x"]), dtype=float)
-            y = np.array(ast.literal_eval(params["y"]), dtype=float)
-            xv = float(params["x_val"])
+            x   = np.array(ast.literal_eval(params["x"]), dtype=float)
+            y   = np.array(ast.literal_eval(params["y"]), dtype=float)
+            xv  = float(params["x_val"])
             yv, diffs = newton_forward(x, y, xv)
             summary_lines += [f"  f({xv}) = {yv:.10f}"]
             summary_lines.append(make_diff_text(diffs, x))
             st.session_state["plot_fig"] = plotly_interp(x, y, xv, yv)
-            st.session_state["metrics"] = {f"f({xv})": f"{yv:.6f}"}
+            st.session_state["metrics"]  = {f"f({xv})": f"{yv:.6f}"}
 
         elif method == "Newton Backward":
-            x = np.array(ast.literal_eval(params["x"]), dtype=float)
-            y = np.array(ast.literal_eval(params["y"]), dtype=float)
-            xv = float(params["x_val"])
+            x   = np.array(ast.literal_eval(params["x"]), dtype=float)
+            y   = np.array(ast.literal_eval(params["y"]), dtype=float)
+            xv  = float(params["x_val"])
             yv, diffs = newton_backward(x, y, xv)
             summary_lines += [f"  f({xv}) = {yv:.10f}"]
             summary_lines.append(make_diff_text(diffs, x))
             st.session_state["plot_fig"] = plotly_interp(x, y, xv, yv)
-            st.session_state["metrics"] = {f"f({xv})": f"{yv:.6f}"}
+            st.session_state["metrics"]  = {f"f({xv})": f"{yv:.6f}"}
 
         elif method == "Stirling":
-            x = np.array(ast.literal_eval(params["x"]), dtype=float)
-            y = np.array(ast.literal_eval(params["y"]), dtype=float)
-            xv = float(params["x_val"])
+            x   = np.array(ast.literal_eval(params["x"]), dtype=float)
+            y   = np.array(ast.literal_eval(params["y"]), dtype=float)
+            xv  = float(params["x_val"])
             yv, diffs = stirling(x, y, xv)
             mid = len(x) // 2
-            p = (xv - x[mid]) / (x[1]-x[0])
-            summary_lines += [f"  f({xv}) = {yv:.10f}", f"  Central point: x_{mid}={x[mid]}, y_{mid}={y[mid]}", f"  p = {p:.4f}"]
+            p   = (xv - x[mid]) / (x[1] - x[0])
+            summary_lines += [f"  f({xv}) = {yv:.10f}",
+                               f"  Central point: x_{mid}={x[mid]}, y_{mid}={y[mid]}",
+                               f"  p = {p:.4f}"]
             summary_lines.append(make_diff_text(diffs, x))
             st.session_state["plot_fig"] = plotly_interp(x, y, xv, yv)
-            st.session_state["metrics"] = {f"f({xv})": f"{yv:.6f}"}
+            st.session_state["metrics"]  = {f"f({xv})": f"{yv:.6f}"}
 
         elif method == "Lagrange":
-            x = np.array(ast.literal_eval(params["x"]), dtype=float)
-            y = np.array(ast.literal_eval(params["y"]), dtype=float)
+            x  = np.array(ast.literal_eval(params["x"]), dtype=float)
+            y  = np.array(ast.literal_eval(params["y"]), dtype=float)
             xv = float(params["x_val"])
             yv = lagrange(x, y, xv)
             summary_lines += [f"  f({xv}) = {yv:.10f}"]
             st.session_state["plot_fig"] = plotly_interp(x, y, xv, yv)
-            st.session_state["metrics"] = {f"f({xv})": f"{yv:.6f}"}
+            st.session_state["metrics"]  = {f"f({xv})": f"{yv:.6f}"}
 
-        st.session_state["summary"] = "\n".join(summary_lines)
+        st.session_state["summary"]       = "\n".join(summary_lines)
         st.session_state["table_headers"] = headers
-        st.session_state["table_rows"] = steps
+        st.session_state["table_rows"]    = steps
         st.toast("✅ Computed successfully!", icon="✅")
 
     except Exception as e:
-        st.error(f"**Error:** {e}")
+        # ── Save error & clear all previous results ──
+        st.session_state["last_error"] = str(e)
+        st.session_state.pop("summary",        None)
+        st.session_state.pop("table_headers",  None)
+        st.session_state.pop("table_rows",     None)
+        st.session_state.pop("plot_fig",       None)
+        st.session_state.pop("conv_fig",       None)
+        st.session_state.pop("metrics",        None)
 
 elif check_clicked:
+    st.session_state.pop("last_error", None)
     ok, text = run_check(method, params)
-    st.session_state["summary"] = text
+    st.session_state["summary"]       = text
     st.session_state["table_headers"] = []
-    st.session_state["table_rows"] = []
-    if "plot_fig" in st.session_state: del st.session_state["plot_fig"]
-    if "conv_fig" in st.session_state: del st.session_state["conv_fig"]
-    if "metrics" in st.session_state: del st.session_state["metrics"]
+    st.session_state["table_rows"]    = []
+    for key in ("plot_fig", "conv_fig", "metrics"):
+        st.session_state.pop(key, None)
     if ok: st.toast("✅ Check completed!", icon="✅")
-    else: st.error("Check found issues!")
+    else:  st.error("Check found issues!")
 
 elif demo_clicked:
     st.rerun()
 
-# --- عرض النتائج ---
-if "summary" in st.session_state and st.session_state["summary"]:
+# ═══════════════════════════════════════════════════════════════════════════════
+#  RESULTS SECTION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ── Show error banner (if any) ABOVE the old results ──
+if st.session_state.get("last_error"):
+    st.markdown(f"""
+    <div class="error-banner">
+        <div class="error-banner-title">⛔ Computation Error</div>
+        <div class="error-banner-msg">{st.session_state["last_error"]}</div>
+        <div class="error-banner-hint">
+            ↑ Fix your inputs and press Compute again.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ── Previous / current results ──
+if st.session_state.get("summary"):
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<div class="section-title">Results</div>', unsafe_allow_html=True)
 
-    if "metrics" in st.session_state:
+    if st.session_state.get("metrics"):
         mc = st.columns(len(st.session_state["metrics"]))
         for i, (k, v) in enumerate(st.session_state["metrics"].items()):
             mc[i].metric(k, v)
@@ -1135,26 +1224,29 @@ if "summary" in st.session_state and st.session_state["summary"]:
         st.markdown(f'<div class="result-box">{st.session_state["summary"]}</div>', unsafe_allow_html=True)
 
     with tab2:
-        if "table_headers" in st.session_state and st.session_state["table_headers"]:
+        if st.session_state.get("table_headers"):
             headers = st.session_state["table_headers"]
-            rows = st.session_state["table_rows"]
+            rows    = st.session_state["table_rows"]
+
             def fmt(v):
-                if isinstance(v, float): return f"{v:.8f}"
+                if isinstance(v, float):      return f"{v:.8f}"
                 if isinstance(v, np.ndarray): return np.array2string(v, precision=6)
                 return str(v)
+
             data = [[fmt(v) for v in row] for row in rows]
-            st.dataframe(pd.DataFrame(data, columns=headers), use_container_width=True, hide_index=True, height=400)
+            st.dataframe(pd.DataFrame(data, columns=headers),
+                         use_container_width=True, hide_index=True, height=400)
         else:
             st.info("No iteration data for this method.")
 
     with tab3:
-        if "plot_fig" in st.session_state:
+        if st.session_state.get("plot_fig"):
             st.plotly_chart(st.session_state["plot_fig"], use_container_width=True)
         else:
             st.info("No plot for this method.")
 
     with tab4:
-        if "conv_fig" in st.session_state:
+        if st.session_state.get("conv_fig"):
             st.plotly_chart(st.session_state["conv_fig"], use_container_width=True)
         else:
             st.info("No convergence plot for this method.")
